@@ -1,0 +1,8 @@
+PROGRAM LABS3;
+LABEL 5 , 4;
+BEGIN
+	1: IN 10;
+	   GOTO 5; (**KP*I**)
+	4: LINK VARIA2,(*variable-identifier*) 13;
+	   OUT 123;
+END.
