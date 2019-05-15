@@ -59,7 +59,7 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 				}
 				else
 				{
-					tree.delete_last_child();
+					//tree.delete_last_child();
 					return false;
 				}
 			}
@@ -328,7 +328,7 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		{
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2012: Colon expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
-			return true;
+			return false;
 		}
 	}
 	else if (lexem_table[iterator].get_id() == 405)
@@ -485,7 +485,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		if (iterator >= lexem_table.size())
 			return false;
 		error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-			"PARSER ERROR#2013: Unsigned integer or Keywords 'GOTO' or 'LINK' or 'IN' or 'OUT' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+			"PARSER ERROR#2013: Unsigned integer or empty lexem or Keywords 'GOTO' or 'LINK' or 'IN' or 'OUT' expected but '" \
+			+ lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 		tree.delete_last_child();
 		return false;
 	}

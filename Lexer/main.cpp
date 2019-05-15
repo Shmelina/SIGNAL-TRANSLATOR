@@ -53,6 +53,13 @@ int main()
 	}
 
 	scanner(idents_table, const_t, keyw_table, predefined_idents, error_table, predefined_consts, separators_table, lexem_table, t_file, ASCII_table);
+	
+	if (lexem_table.size() == 0)
+	{
+		cout << "File" << filename << " is empty." << endl;
+		system("pause");
+		return 0;
+	}
 
 	print_lexem_row_table(lexem_table, lex_row);
 	print_lexem_table(const_t, constants_table);
@@ -95,7 +102,7 @@ int main()
 	t_file.close();
 
 	int tree_iter = 0;
-	cout << "S:" << endl;
+	cout << "Tree:" << endl;
 	synt(lexem_table, tree, tree_iter, error_table);
 
 	print_errors(error_table);
