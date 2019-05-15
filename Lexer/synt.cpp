@@ -31,16 +31,16 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 {
 	if (lexem_table[iterator].get_id() == 401)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		int i = 1;
 		tree.add_child("<procedure-identifier>");
 		if (_procedure_identifier(lexem_table, tree.get_child(i), iterator, error_table))
 		{
 			if (lexem_table[iterator].get_id() == 59)
 			{
-				tree.add_child(lexem_table[iterator].get_lexem_ptr());
-				iterator++;
+				if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+					return false;
 				i = 3;
 				tree.add_child("<block>");
 				if (_block(lexem_table, tree.get_child(i), iterator, error_table))
@@ -72,6 +72,8 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2002: Procedure identifier expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -86,14 +88,12 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 	}
 }
 
-
-
 bool _procedure_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table)
 {
 	if (lexem_table[iterator].get_id() >= 1000)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		return true;
 	}
 	else
@@ -110,8 +110,8 @@ bool _block(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<er
 	{
 		if (lexem_table[iterator].get_id() == 403)
 		{
-			tree.add_child(lexem_table[iterator].get_lexem_ptr());
-			iterator++;
+			if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+				return false;
 			i = 2;
 			tree.add_child("<statments-list>");
 			if (_statments_list(lexem_table, tree.get_child(i), iterator, error_table))
@@ -119,14 +119,14 @@ bool _block(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<er
 				if (lexem_table[iterator].get_id() == 408)
 				{
 					 
-					tree.add_child(lexem_table[iterator].get_lexem_ptr());
-					iterator++;
+					if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+						return false;
 					return true;
 				}
 				else
 				{
 					error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-						"PARSER ERROR#2003: Keyword 'END' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+						"PARSER ERROR#2008: Keyword 'END' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 					return false;
 				}
 			}
@@ -139,7 +139,7 @@ bool _block(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<er
 		else
 		{
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-				"PARSER ERROR#2003: Keywors 'BEGIN' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+				"PARSER ERROR#2007: Keywors 'BEGIN' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			return false;
 		}
 	}
@@ -174,8 +174,8 @@ bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterat
 	}
 	else if (lexem_table[iterator].get_id() == 402)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		int i = 1;
 		tree.add_child("<unsigned-integer>");
 		if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
@@ -187,8 +187,8 @@ bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterat
 				 
 				if (lexem_table[iterator].get_id() == 59)
 				{
-					tree.add_child(lexem_table[iterator].get_lexem_ptr());
-					iterator++;
+					if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+						return false;
 					return true;
 				}
 				else
@@ -206,6 +206,8 @@ bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterat
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -215,7 +217,7 @@ bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterat
 	else
 	{
 		error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-			"PARSER ERROR#2003: Keyword 'LABEL' or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+			"PARSER ERROR#2009: Keyword 'LABEL' or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 		return false;
 	}
 }
@@ -229,8 +231,8 @@ bool _lables_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vec
 	}
 	else if (lexem_table[iterator].get_id() == 44)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		int i = 1;
 		tree.add_child("<unsigned-integer>");
 		if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
@@ -249,6 +251,8 @@ bool _lables_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vec
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -258,7 +262,7 @@ bool _lables_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vec
 	else
 	{
 		error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-			"PARSER ERROR#2005: Comma or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+			"PARSER ERROR#2010: Comma or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 		return false;
 	}
 }
@@ -289,8 +293,10 @@ bool _statments_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, 
 	}
 	else
 	{
+		if (iterator >= lexem_table.size())
+			return false;
 		error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-			"PARSER ERROR#2005: Statment or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+			"PARSER ERROR#2011: Statment or empty lexem expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 		tree.delete_last_child();
 		return false;
 	}
@@ -304,8 +310,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	{
 		if (lexem_table[iterator].get_id() == 58)
 		{
-			tree.add_child(lexem_table[iterator].get_lexem_ptr());
-			iterator++;
+			if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+				return false;
 			i = 2;
 			tree.add_child("<statment>");
 			if (_statment(lexem_table, tree.get_child(i), iterator, error_table))
@@ -321,23 +327,22 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		else
 		{
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-				"PARSER ERROR#2006: Colon expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+				"PARSER ERROR#2012: Colon expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			return true;
 		}
 	}
 	else if (lexem_table[iterator].get_id() == 405)
 	{
-		tree.delete_last_child();
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		tree.add_child("<unsigned-integer>");
 		i = 1;
 		if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
 		{ 
 			if (lexem_table[iterator].get_id() == 59)
 			{ 
-				tree.add_child(lexem_table[iterator].get_lexem_ptr());
-				iterator++;
+				if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+					return false;
 				return true;
 			}
 			else
@@ -349,6 +354,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -357,25 +364,24 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 406)
 	{
-		tree.delete_last_child();
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		tree.add_child("<variable-identifier>");
 		i = 1;
 		if (_variable_identifier(lexem_table, tree.get_child(i), iterator, error_table))
 		{
 			if (lexem_table[iterator].get_id() == 44)
 			{
-				tree.add_child(lexem_table[iterator].get_lexem_ptr());
-				iterator++;
+				if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+					return false;
 				tree.add_child("<unsigned-integer>");
 				i = 3;
 				if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
 				{
 					if (lexem_table[iterator].get_id() == 59)
 					{
-						tree.add_child(lexem_table[iterator].get_lexem_ptr());
-						iterator++;
+						if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+							return false;
 						return true;
 					}
 					else
@@ -387,6 +393,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 				}
 				else
 				{
+					if (iterator >= lexem_table.size())
+						return false;
 					error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 						"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 					tree.delete_last_child();
@@ -396,12 +404,14 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 			else
 			{
 				error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-					"PARSER ERROR#2008: Comma expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+					"PARSER ERROR#20010: Comma expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 				return false;
 			}
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2006: Variable identifier expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -410,17 +420,16 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 404)
 	{ 
-		tree.delete_last_child();
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		tree.add_child("<unsigned-integer>");
 		i = 1;
 		if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
 		{
 			if (lexem_table[iterator].get_id() == 59)
 			{
-				tree.add_child(lexem_table[iterator].get_lexem_ptr());
-				iterator++;
+				if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+					return false;
 				return true;
 			}
 			else
@@ -432,6 +441,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -440,17 +451,16 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 407)
 	{
-		tree.delete_last_child();
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		tree.add_child("<unsigned-integer>");
 		i = 1;
 		if (_unsigned_integer(lexem_table, tree.get_child(i), iterator, error_table))
 		{ 
 			if (lexem_table[iterator].get_id() == 59)
 			{ 
-				tree.add_child(lexem_table[iterator].get_lexem_ptr());
-				iterator++;
+				if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+					return false;
 				return true;
 			}
 			else
@@ -462,6 +472,8 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 		}
 		else
 		{
+			if (iterator >= lexem_table.size())
+				return false;
 			error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
 				"PARSER ERROR#2005: Unsigned integer expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 			tree.delete_last_child();
@@ -470,8 +482,10 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else
 	{
+		if (iterator >= lexem_table.size())
+			return false;
 		error_table.push_back(error(lexem_table[iterator].get_row_number(), lexem_table[iterator].get_collumn(), \
-			"PARSER ERROR#2007: Unsigned integer or Keywords 'GOTO' or 'LINK' or 'IN' or 'OUT' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
+			"PARSER ERROR#2013: Unsigned integer or Keywords 'GOTO' or 'LINK' or 'IN' or 'OUT' expected but '" + lexem_table[iterator].get_lexem_ptr()->get_name() + "' found on "));
 		tree.delete_last_child();
 		return false;
 	}
@@ -481,8 +495,8 @@ bool _variable_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& itera
 {
 	if (lexem_table[iterator].get_id() >= 1000)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		return true;
 	}
 	else
@@ -495,13 +509,25 @@ bool _unsigned_integer(vector<lexem_row>& lexem_table, leaf& tree, int& iterator
 {
 	if (lexem_table[iterator].get_id() >= 500 and lexem_table[iterator].get_id() < 1000)
 	{
-		tree.add_child(lexem_table[iterator].get_lexem_ptr());
-		iterator++;
+		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
+			return false;
 		return true;
 	}
 	else
 	{
 		return false;
 	}
+}
 
+bool add_child_with_iteration(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table)
+{
+	tree.add_child(lexem_table[iterator].get_lexem_ptr());
+	iterator++;
+	if (iterator >= lexem_table.size())
+	{
+		error_table.push_back(error(lexem_table[iterator - 1].get_row_number(), lexem_table[iterator - 1].get_collumn(), \
+			"PARSER ERROR#2000: Unexepted end of code. Last lexem '" + lexem_table[iterator - 1].get_lexem_ptr()->get_name() + "' found on "));
+		return false;
+	}
+	return true;
 }

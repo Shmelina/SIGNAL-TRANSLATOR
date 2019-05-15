@@ -62,3 +62,4 @@ bool _statments_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, 
 bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
 bool _variable_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
 bool _unsigned_integer(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool add_child_with_iteration(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
