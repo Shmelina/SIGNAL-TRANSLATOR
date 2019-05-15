@@ -1,214 +1,105 @@
 #include "main.h"
 #include "tables.h"
-
-string comment(ifstream *t_file, char *ch, string line)
-{
-	*ch = (char)t_file->get();
-	while ((*ch != '*') && (*ch != EOF))
-	{
-		cout << *ch;
-		*ch = (char)t_file->get();
-		while (*ch == '*')
-		{
-			cout << *ch;
-			*ch = (char)t_file->get();
-			if (*ch == ')')
-			{
-				cout << *ch;
-				cout << "comment";
-				return 0;
-			}
-			if (*ch == EOF)
-			{
-				cout << "ERROR";
-				return 0;
-			}
-		}
-	}
-	cout << "ERROR";
-}
+#include "synt.h"
 
 int main()
 {
 	setlocale(LC_ALL, "ukr");
 	string filename;
 	cout << "File name: ";
-	//cin >> filename;
-	filename = "p";
+	cin >> filename;
 	filename += ".sim";
 	ifstream t_file;
 	t_file.open(filename);
-	ifstream iden_table;
-	iden_table.open("identifiers.txt");
-	ifstream separ_table;
+	fstream ident_table;
+	ident_table.open("identifiers.txt");
+	fstream const_table;
+	const_table.open("constants.txt");
+	ofstream separ_table;
 	separ_table.open("separators.txt");
-	ifstream keyword_table;
+	fstream keyword_table;
 	keyword_table.open("keyword.txt");
 	ifstream ASCII_table;
 	ASCII_table.open("ASCII.txt");
 	ofstream lex_row;
-	lex_row.open("Lexems.data");
-	vector<ASCII_row> ASCII_tab;
-	char ch;
+	lex_row.open("lexem_row.txt");
+	ofstream lex_table;
+	lex_table.open("idents_table.txt");
+	ofstream constants_table;
+	constants_table.open("constants_table.txt");
+	vector<lexem> idents_table;
+	vector<lexem> const_t;
+	vector<lexem> keyw_table;
+	vector<lexem> predefined_idents;
+	vector<lexem> predefined_consts;
+	vector<lexem> separators_table;
+	vector<error> error_table;
+	vector<lexem_row> lexem_table;
+	leaf tree;
+
+	fill_lexems_from_file(ident_table, &predefined_idents, 2);
+	fill_lexems_from_file(keyword_table, &keyw_table, 4);
+	fill_constants_from_file(const_table, &predefined_consts);
+
+	ident_table.close();
+	keyword_table.close();
+	const_table.close();
+
 	if (!t_file.is_open())
 	{
 		cout << "File" << filename << " couldn`t be open, or doesn`t exists." << endl;
 		system("pause");
 		return 0;
 	}
-	/*for (int i = 0; i < 128; i++)
-	{
-		if (i >= 0 && i < 8)
-			ASCII_table << 6;
-		else if (i >= 8 && i < 40)
-			ASCII_table << 0;
-		else if (i >= 40 && i < 48)
-			ASCII_table << 5;
-		else if (i >= 48 && i < 58)
-			ASCII_table << 1;
-		else if (i >= 58 && i < 60)
-			ASCII_table << 3;
-		else if (i >= 60 && i < 62)
-			ASCII_table << 7;
-		else if (i >= 62 && i < 65)
-			ASCII_table << 8;
-		else if (i >= 65 && i < 128)
-			ASCII_table << 2;
 
-	}*/
-	string line;
-	for (int id = 0; id < 128; id++)
+	scanner(idents_table, const_t, keyw_table, predefined_idents, error_table, predefined_consts, separators_table, lexem_table, t_file, ASCII_table);
+
+	print_errors(error_table);
+
+	print_lexem_row_table(lexem_table, lex_row);
+	print_lexem_table(const_t, constants_table);
+	print_lexem_table(idents_table, lex_table);
+	print_lexem_table(separators_table, separ_table);
+
+	char ch;
+	while (true)
 	{
-		ASCII_table.get(ch);
-		ASCII_type[id] = ch;
+		cout << "Print tables? Y/N: ";
+		cin >> ch;
+		if (ch == 'Y' or ch == 'y')
+		{
+			cout << "Lexem row:" << endl;
+			p_lexem_row_table(lexem_table);
+			cout << endl;
+			cout << "Const table:" << endl;
+			p_lexem_table(const_t);
+			cout << endl;
+			cout << "Identifier table:" << endl;
+			p_lexem_table(idents_table);
+			cout << endl;
+			cout << "Separator table:" << endl;
+			p_lexem_table(separators_table);
+			cout << endl;
+			break;
+		}
+		else if (ch == 'N' or ch == 'n')
+		{
+			break;
+		}
+		else
+			cout << "Wrong choise." << endl;
 	}
-	ch = (char)t_file.get();
-	isalpha(line[0]);
-	bool f = false;
-	bool coment = false;
-	while (ch != EOF)
-	{
-		if(!f)
-			cout << ch;
-		f = false;
-		switch (ASCII_type[(int)ch])
-		{
-		case '2':
-		{
-			while (ASCII_type[(int)ch] == '2' || ASCII_type[(int)ch] == '1')
-			{
-				ch = (char)t_file.get();
-				cout << ch;
-				f = true;
-			}
-			cout << "ident";
-			break;
-		}
-		case '1':
-		{
-			while (ASCII_type[(int)ch] == '1')
-			{
-				ch = (char)t_file.get();
-				cout << ch;
-				f = true;
-			}
-			if (ASCII_type[(int)ch] == '2')
-				cout << "ERROR";
-			cout << "num";
-			break;
-		}
-		case '3':
-		{
-			cout << "separ";
-			break;
-		}
-		case '0':
-		{
-			while (ASCII_type[(int)ch] == '0')
-			{
-				ch = (char)t_file.get();
-				cout << ch;
-				f = true;
-			}
-			cout << "WS";
-			break;
-		}
-		case '5':
-		{
-			ch = (char)t_file.get();
-			if (ch == '*')
-			{
-				cout << ch;
-				//comment(&t_file, &ch, line);
-				ch = (char)t_file.get();
-				while (!coment)
-				{
-					while ((ch != '*') && (ch != EOF))
-					{
-						cout << ch;
-						ch = (char)t_file.get();
-						while (ch == '*')
-						{
-							cout << ch;
-							ch = (char)t_file.get();
-							if (ch == ')')
-							{
-								cout << ch;
-								cout << "comment";
-								coment = true;
-								break;
-							}
-							if (ch == EOF)
-							{
-								cout << "ERROR1";
-							}
-						}
-					}
-					while (ch == '*')
-					{
-						cout << ch;
-						ch = (char)t_file.get();
-						if (ch == ')')
-						{
-							cout << ch;
-							cout << "comment";
-							coment = true;
-							break;
-						}
-						if (ch == EOF)
-						{
-							cout << "ERROR1";
-						}
-					}
-				}
-				f = true;
-			}
-			else
-			{
-				cout << "ERROR2";
-				break;
-			}
-			//cout << "comment";
-			break;
-		}
-		case '6':
-		{
-			cout << "error/6";
-			break;
-		}
-		//default: cout << ASCII_type[(int)ch];
-		}
-		if (!f)
-			ch = (char)t_file.get();
-	}
-	cout << endl;
-	/*for (int i = 0; i < 128; i++)
-		cout << (char)i;
-	cout << endl;
-	for (int i = 0; i < 128; i++)
-		cout << ASCII_type[i];*/
+
+	ASCII_table.close();
+	lex_row.close();
+	lex_table.close();
+	constants_table.close();
 	t_file.close();
-	cout << endl;
+
+	int tree_iter = 0;
+	cout << "S:" << endl;
+	synt(lexem_table, tree, tree_iter);
+	tree.print_tree();
 	system("pause");
 	return 0;
 }

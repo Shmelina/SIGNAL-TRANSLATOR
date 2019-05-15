@@ -1,0 +1,12 @@
+PROGRAM 1LABS3;
+LABEL 1h , 4;
+BEGIN
+	1: IN 10;
+	   GOTO 5; (**)
+	4: LINK 1VARIA2,(* *) 13; (**
+*ssds**)	   IN 20;
+	(*(()*())*)
+	( אמ³הכאמ³ג
+	(*;
+	   OUT 123;
+END.
