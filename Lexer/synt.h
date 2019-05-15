@@ -50,15 +50,15 @@ public:
 	}
 };
 
-bool synt(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _signal_program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _procedure_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _block(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _lables_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _statments_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _variable_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
-bool _unsigned_integer(vector<lexem_row>& lexem_table, leaf& tree, int& iterator);
+bool synt(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _signal_program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _procedure_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _block(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _lable_declarations(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _lables_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _statments_list(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _variable_identifier(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);
+bool _unsigned_integer(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table);

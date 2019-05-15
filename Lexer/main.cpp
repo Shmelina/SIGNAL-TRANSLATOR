@@ -54,8 +54,6 @@ int main()
 
 	scanner(idents_table, const_t, keyw_table, predefined_idents, error_table, predefined_consts, separators_table, lexem_table, t_file, ASCII_table);
 
-	print_errors(error_table);
-
 	print_lexem_row_table(lexem_table, lex_row);
 	print_lexem_table(const_t, constants_table);
 	print_lexem_table(idents_table, lex_table);
@@ -98,7 +96,9 @@ int main()
 
 	int tree_iter = 0;
 	cout << "S:" << endl;
-	synt(lexem_table, tree, tree_iter);
+	synt(lexem_table, tree, tree_iter, error_table);
+
+	print_errors(error_table);
 	tree.print_tree();
 	system("pause");
 	return 0;
