@@ -135,6 +135,7 @@ int main()
 
 	print_errors(error_table);
 	tree.print_to_file(tree_file);
+	asm_code.close();
 	system("pause");
 	return 0;
 }
