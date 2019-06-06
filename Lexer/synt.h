@@ -5,7 +5,7 @@
 struct leaf
 {
 private:
-	struct vector<leaf> child;
+	vector<leaf> child;
 	lexem *lex;
 	int level;
 	string name;
@@ -37,6 +37,40 @@ public:
 		if (i < child.size() && i >= 0)
 			return child[i];
 	}
+	lexem get_lexem()
+	{
+		return *lex;
+	}
+	string get_node_name()
+	{
+		return name;
+	}
+	leaf& get_child_by_lexem(string lexem_name)
+	{
+		for (auto &i : child)
+		{
+			if (i.get_lexem().get_name() == lexem_name)
+				return i;
+			else
+				i.get_child_by_lexem(lexem_name);
+		}
+	}
+	bool search_for_lexem_name(string lexem_name)
+	{
+		for (auto &i : child)
+		{
+			if (i.get_lexem().get_name() == lexem_name)
+				return true;
+			else
+				i.search_for_lexem_name(lexem_name);
+		}
+		return false;
+	}
+	leaf& get_child_if_tree_name(string tree_name, int i)
+	{
+		if (tree_name == name)
+			return child[i];
+	}
 	void print_tree()
 	{
 		for (int i = 0; i < level; i++)
@@ -47,6 +81,17 @@ public:
 			cout << name << endl;
 		for (auto &i : child)
 			i.print_tree();
+	}
+	void print_to_file(ostream &output)
+	{
+		for (int i = 0; i < level; i++)
+			output << "|  ";
+		if (lex != NULL)
+			output << "|->" << lex->get_id() << "    " << lex->get_name() << endl;
+		else
+			output << "|->" << name << endl;
+		for (auto &i : child)
+			i.print_to_file(output);
 	}
 };
 

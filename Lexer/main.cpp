@@ -1,16 +1,19 @@
 #include "main.h"
 #include "tables.h"
 #include "synt.h"
+#include "codegen.h"
 
 int main()
 {
 	setlocale(LC_ALL, "ukr");
-	string filename;
+	string filename, fname;
 	cout << "File name: ";
-	cin >> filename;
-	filename += ".sim";
+	cin >> fname;
+	filename = fname + ".sim";
 	ifstream t_file;
 	t_file.open(filename);
+	ifstream IOports;
+	IOports.open("IOports.txt");
 	fstream ident_table;
 	ident_table.open("identifiers.txt");
 	fstream const_table;
@@ -27,6 +30,10 @@ int main()
 	lex_table.open("idents_table.txt");
 	ofstream constants_table;
 	constants_table.open("constants_table.txt");
+	ofstream asm_code;
+	asm_code.open(fname + ".asm");
+	ofstream tree_file;
+	tree_file.open("tree.txt");
 	vector<lexem> idents_table;
 	vector<lexem> const_t;
 	vector<lexem> keyw_table;
@@ -89,6 +96,7 @@ int main()
 		}
 		else if (ch == 'N' or ch == 'n')
 		{
+			ch = ' ';
 			break;
 		}
 		else
@@ -102,11 +110,31 @@ int main()
 	t_file.close();
 
 	int tree_iter = 0;
-	cout << "Tree:" << endl;
 	synt(lexem_table, tree, tree_iter, error_table);
 
+	while (true)
+	{
+		cout << "Print syntaxis tree? Y/N: ";
+		cin >> ch;
+		if (ch == 'Y' or ch == 'y')
+		{
+			tree.print_tree();
+			break;
+		}
+		else if (ch == 'N' or ch == 'n')
+		{
+			ch = ' ';
+			break;
+		}
+		else
+			cout << "Wrong choise." << endl;
+	}
+
+	if (error_table.size() == 0)
+		_generate_code(tree, error_table, asm_code, idents_table, predefined_idents, lexem_table);
+
 	print_errors(error_table);
-	tree.print_tree();
+	tree.print_to_file(tree_file);
 	system("pause");
 	return 0;
 }

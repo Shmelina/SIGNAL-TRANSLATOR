@@ -247,7 +247,7 @@ bool search_in_table(vector<lexem> &lexem_table, string lexem_name, int &curr_id
 	return false;
 }
 
-bool search_in_table(vector<lexem> &lexem_table, int id)
+bool search_in_table_by_id(vector<lexem> &lexem_table, int id)
 {
 	for (int i = 0; i < lexem_table.size(); i++)
 		if (lexem_table[i].is_lexem_id(id))
@@ -306,17 +306,31 @@ void fill_ptr(vector<lexem>& idents_table, vector<lexem>& const_t, vector<lexem>
 			lexem.set_ptr(get_lexem_ptr(keyw_table, id));
 		else if (id > 500 and id <= 1000)
 		{
-			if (search_in_table(const_t, id))
+			if (search_in_table_by_id(const_t, id))
 				lexem.set_ptr(get_lexem_ptr(const_t, id));
-			else if (search_in_table(predefined_consts, id))
+			else if (search_in_table_by_id(predefined_consts, id))
 				lexem.set_ptr(get_lexem_ptr(predefined_consts, id));
 		}
 		else if (id > 1000)
 		{
-			if (search_in_table(idents_table, id))
+			if (search_in_table_by_id(idents_table, id))
 				lexem.set_ptr(get_lexem_ptr(idents_table, id));
-			else if (search_in_table(predefined_idents, id))
+			else if (search_in_table_by_id(predefined_idents, id))
 				lexem.set_ptr(get_lexem_ptr(predefined_idents, id));
 		}
 	}
+}
+
+lexem_row& search_lexem_row_by_lexem(lexem lexem, vector<lexem_row>& lexem_table)
+{
+	bool f = false;
+	lexem_row& a_row = lexem_table[0];
+	for (auto &row : lexem_table)
+		if (row.get_id() == lexem.get_id())
+		{
+			a_row = row;
+			f = true;
+		}
+	if (f)
+		return a_row;
 }

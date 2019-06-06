@@ -59,7 +59,6 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 				}
 				else
 				{
-					//tree.delete_last_child();
 					return false;
 				}
 			}
@@ -333,6 +332,7 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 405)
 	{
+		tree.delete_last_child();
 		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
 			return false;
 		tree.add_child("<unsigned-integer>");
@@ -364,6 +364,7 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 406)
 	{
+		tree.delete_last_child();
 		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
 			return false;
 		tree.add_child("<variable-identifier>");
@@ -420,6 +421,7 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 404)
 	{ 
+		tree.delete_last_child();
 		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
 			return false;
 		tree.add_child("<unsigned-integer>");
@@ -451,6 +453,7 @@ bool _statment(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector
 	}
 	else if (lexem_table[iterator].get_id() == 407)
 	{
+		tree.delete_last_child();
 		if (!add_child_with_iteration(lexem_table, tree, iterator, error_table))
 			return false;
 		tree.add_child("<unsigned-integer>");
