@@ -320,17 +320,3 @@ void fill_ptr(vector<lexem>& idents_table, vector<lexem>& const_t, vector<lexem>
 		}
 	}
 }
-
-lexem_row& search_lexem_row_by_lexem(lexem lexem, vector<lexem_row>& lexem_table)
-{
-	bool f = false;
-	lexem_row& a_row = lexem_table[0];
-	for (auto &row : lexem_table)
-		if (row.get_id() == lexem.get_id())
-		{
-			a_row = row;
-			f = true;
-		}
-	if (f)
-		return a_row;
-}

@@ -47,7 +47,7 @@ bool _program(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<
 				{
 					if (lexem_table[iterator].get_id() == 46)
 					{
-						tree.add_child(lexem_table[iterator].get_lexem_ptr());
+						tree.add_child(&lexem_table[iterator]);
 						return true;
 					}
 					else
@@ -525,7 +525,7 @@ bool _unsigned_integer(vector<lexem_row>& lexem_table, leaf& tree, int& iterator
 
 bool add_child_with_iteration(vector<lexem_row>& lexem_table, leaf& tree, int& iterator, vector<error>& error_table)
 {
-	tree.add_child(lexem_table[iterator].get_lexem_ptr());
+	tree.add_child(&lexem_table[iterator]);
 	iterator++;
 	if (iterator >= lexem_table.size())
 	{

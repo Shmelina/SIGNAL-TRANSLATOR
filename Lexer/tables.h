@@ -37,7 +37,6 @@ private:
 	int row;
 	int collumn;
 public:
-	lexem_row();
 	lexem_row(int lexem_id, int lexem_row_number, int lexem_collumn) { id = lexem_id; row = lexem_row_number; collumn = lexem_collumn; }
 	lexem_row(lexem* lexema, int lexem_row_number, int lexem_collumn) { lex = lexema; id = lex->get_id(); row = lexem_row_number; collumn = lexem_collumn; }
 	void print() { cout << id << "\t" << row << "\t" << collumn << endl; }
@@ -77,4 +76,3 @@ void print_errors(vector<error>& error_table);
 lexem* get_lexem_ptr(vector<lexem> &lexem_table, int id);
 void fill_ptr(vector<lexem>& idents_table, vector<lexem>& const_t, vector<lexem>& keyw_table, vector<lexem>& predefined_idents, vector<error>& error_table, \
 	vector<lexem>& predefined_consts, vector<lexem>& separators_table, vector<lexem_row>& lexem_table);
-lexem_row& search_lexem_row_by_lexem(lexem lexem, vector<lexem_row>& lexem_table);

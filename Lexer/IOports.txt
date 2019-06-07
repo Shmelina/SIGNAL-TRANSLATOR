@@ -1,0 +1,16 @@
+1 I
+2 I
+3 I
+4 I
+5 O
+6 O
+7 O
+8 O
+9 IO
+10 IO
+11 IO
+12 IO
+13 IO
+14 IO
+15 IO
+16 IO

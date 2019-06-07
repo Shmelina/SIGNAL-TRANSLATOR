@@ -43,11 +43,16 @@ int main()
 	vector<error> error_table;
 	vector<lexem_row> lexem_table;
 	leaf tree;
+	vector<i_table> links_table;
+	vector<i_table> IOports_table;
+	vector<i_table> lables_table;
 
+	fill_IOports_from_file(IOports, &IOports_table);
 	fill_lexems_from_file(ident_table, &predefined_idents, 2);
 	fill_lexems_from_file(keyword_table, &keyw_table, 4);
 	fill_constants_from_file(const_table, &predefined_consts);
 
+	IOports.close();
 	ident_table.close();
 	keyword_table.close();
 	const_table.close();
@@ -60,7 +65,7 @@ int main()
 	}
 
 	scanner(idents_table, const_t, keyw_table, predefined_idents, error_table, predefined_consts, separators_table, lexem_table, t_file, ASCII_table);
-	
+
 	if (lexem_table.size() == 0)
 	{
 		cout << "File" << filename << " is empty." << endl;
@@ -130,11 +135,17 @@ int main()
 			cout << "Wrong choise." << endl;
 	}
 
-	if (error_table.size() == 0)
-		_generate_code(tree, error_table, asm_code, idents_table, predefined_idents, lexem_table);
-
 	print_errors(error_table);
 	tree.print_to_file(tree_file);
+	tree_file.close();
+
+	if (error_table.size() == 0)
+	{
+		_generate_code(tree, error_table, asm_code, idents_table, predefined_idents, lexem_table, links_table, lables_table, IOports_table);
+	}
+	else
+		cout << "Errors has been found. Could not generate code." << endl;
+
 	asm_code.close();
 	system("pause");
 	return 0;

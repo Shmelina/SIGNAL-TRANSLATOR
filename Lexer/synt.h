@@ -6,13 +6,13 @@ struct leaf
 {
 private:
 	vector<leaf> child;
-	lexem *lex;
+	lexem_row *lex;
 	int level;
 	string name;
 public:
 	leaf() { level = 0; lex = NULL; name = "_tree"; };
 	leaf(int level_number, string node_name) { level = level_number; lex = NULL; name = node_name; };
-	leaf(int level_number, lexem *lexema) { lex = lexema; level = level_number; name = ""; };
+	leaf(int level_number, lexem_row *lexema) { lex = lexema; level = level_number; name = ""; };
 	void delete_last_child() 
 	{ 
 		if (child.size() > 0)
@@ -23,7 +23,7 @@ public:
 		level = n_level;
 		name = n_name;
 	}
-	void add_child(lexem *lexema)
+	void add_child(lexem_row *lexema)
 	{
 		child.push_back(leaf(level + 1, lexema));
 	}
@@ -37,7 +37,7 @@ public:
 		if (i < child.size() && i >= 0)
 			return child[i];
 	}
-	lexem get_lexem()
+	lexem_row get_lexem()
 	{
 		return *lex;
 	}
@@ -49,7 +49,7 @@ public:
 	{
 		for (auto &i : child)
 		{
-			if (i.get_lexem().get_name() == lexem_name)
+			if (i.get_lexem().get_lexem_ptr()->get_name() == lexem_name)
 				return i;
 			else
 				i.get_child_by_lexem(lexem_name);
@@ -59,10 +59,14 @@ public:
 	{
 		for (auto &i : child)
 		{
-			if (i.get_lexem().get_name() == lexem_name)
-				return true;
+			if (i.get_node_name() == "")
+			{
+				if (i.get_lexem().get_lexem_ptr()->get_name() == lexem_name)
+					return true;
+			}
 			else
-				i.search_for_lexem_name(lexem_name);
+				if (i.search_for_lexem_name(lexem_name))
+					return true;
 		}
 		return false;
 	}
@@ -76,7 +80,7 @@ public:
 		for (int i = 0; i < level; i++)
 			cout << "..";
 		if (lex != NULL)
-			cout << lex->get_id() << "    " <<lex->get_name() << endl;
+			cout << lex->get_id() << "    " <<lex->get_lexem_ptr()->get_name() << endl;
 		else
 			cout << name << endl;
 		for (auto &i : child)
@@ -87,7 +91,7 @@ public:
 		for (int i = 0; i < level; i++)
 			output << "|  ";
 		if (lex != NULL)
-			output << "|->" << lex->get_id() << "    " << lex->get_name() << endl;
+			output << "|->" << lex->get_id() << "    " << lex->get_lexem_ptr()->get_name() << endl;
 		else
 			output << "|->" << name << endl;
 		for (auto &i : child)
