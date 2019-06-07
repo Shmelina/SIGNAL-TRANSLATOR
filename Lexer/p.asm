@@ -3,6 +3,8 @@ LABEL 1
 LABEL 4
 1:
 	;;IN 10
+9:
+9:
 	;;IN 1
 	;;OUT 6
 	;;OUT 9

@@ -3,7 +3,7 @@ LABEL 1 , 4, 1;
 BEGIN
 	1: IN 10;
 	IN 120;
-	IN 5;
+	9: 9: IN 5;
 	IN 1;
 	OUT 2;
 	OUT 6;

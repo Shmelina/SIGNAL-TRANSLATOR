@@ -82,7 +82,18 @@ void _chek_for_SE_statement_lables(leaf& _tree, vector<error>& _error_table, vec
 	if (_tree.get_child(0).get_node_name() == "<unsigned-integer>")
 	{
 		string _lable = _tree.get_child(0).get_child(0).get_lexem().get_lexem_ptr()->get_name();
-		lables_table.push_back(i_table(_lable, "C"));
+		bool found = false;
+		for (auto &_l : lables_table)
+			if (_l.get_var() == _lable && _l.get_val() == "C")
+			{
+				found = true;
+				_error_table.push_back(error(_tree.get_child(0).get_child(0).get_lexem().get_row_number(), _tree.get_child(0).get_child(0).get_lexem().get_collumn(), \
+					"CODE GENERATOR ERROR#3008: Redeclaration label '" + _lable + "' found on "));
+
+				break;
+			}
+		if (!found)
+			lables_table.push_back(i_table(_lable, "C"));
 		_chek_for_SE_statement_lables(_tree.get_child(2), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
 		return;
 	}
