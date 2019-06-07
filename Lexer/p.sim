@@ -1,16 +1,17 @@
 PROGRAM LAB3;
-LABEL 1 , 4;
+LABEL 1 , 4, 1;
 BEGIN
 	1: IN 10;
-	IN 1;
+	IN 120;
 	IN 5;
+	IN 1;
 	OUT 2;
 	OUT 6;
 	OUT 9;
 	OUT 10;
 	   GOTO 5; (**KP*I**)
-	5: LINK LABS3, 13;
-	4: LINK VARIA2,(*variable-identifier*) 13; (**
-*ssds**)	   IN 20;
-	   OUT 123;
+	5: LINK LAB3, 13;
+	4: LINK VARIA2,(*variable-identifier*) 17; (**
+*ssds**)	  
+	GOTO 3;
 END.

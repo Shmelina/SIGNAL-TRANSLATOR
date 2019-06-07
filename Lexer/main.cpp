@@ -34,6 +34,10 @@ int main()
 	asm_code.open(fname + ".asm");
 	ofstream tree_file;
 	tree_file.open("tree.txt");
+	ofstream links_t;
+	links_t.open("links_table.txt");
+	ofstream lables_t;
+	lables_t.open("lables_table.txt");
 	vector<lexem> idents_table;
 	vector<lexem> const_t;
 	vector<lexem> keyw_table;
@@ -135,7 +139,6 @@ int main()
 			cout << "Wrong choise." << endl;
 	}
 
-	print_errors(error_table);
 	tree.print_to_file(tree_file);
 	tree_file.close();
 
@@ -146,6 +149,11 @@ int main()
 	else
 		cout << "Errors has been found. Could not generate code." << endl;
 
+	print_errors(error_table);
+	print_i_table_to_file(links_table, links_t);
+	print_i_table_to_file(lables_table, lables_t);
+	links_t.close();
+	lables_t.close();
 	asm_code.close();
 	system("pause");
 	return 0;

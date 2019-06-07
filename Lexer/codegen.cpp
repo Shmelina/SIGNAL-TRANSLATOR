@@ -27,6 +27,7 @@ void _check_for_SE_program(leaf& _tree, vector<error>& _error_table, vector<lexe
 	if (_tree.get_child_if_tree_name("<program>", 3).get_child_if_tree_name("<block>", 0).get_child_if_tree_name("<declarations>", 0).get_child_if_tree_name("<lable-declarations>", 0).get_node_name() != "<empty>")
 		_chek_for_SE_lable_declarations(_tree.get_child_if_tree_name("<program>", 3).get_child_if_tree_name("<block>", 0).get_child_if_tree_name("<declarations>", 0), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, lables_table);
 	
+	_chek_for_SE_statement_list_lables(_tree.get_child_if_tree_name("<program>", 3).get_child_if_tree_name("<block>", 2), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
 	_chek_for_SE_statement_list(_tree.get_child_if_tree_name("<program>", 3).get_child_if_tree_name("<block>", 2), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
 	asm_code += _program_identifier + " ENDS";
 	return;
@@ -65,6 +66,29 @@ void _chek_for_SE_lables_list(leaf& _tree, vector<error>& _error_table, vector<l
 	return;
 }
 
+void _chek_for_SE_statement_list_lables(leaf& _tree, vector<error>& _error_table, vector<lexem>& idents_table, vector<lexem>& predefined_idents, string _program_identifier, vector<lexem_row>& lexem_table, string& asm_code, vector<i_table>& links_table, vector<i_table>& lables_table, vector<i_table>& IOports_table)
+{
+	if (_tree.get_child_if_tree_name("<statments-list>", 0).get_node_name() == "<statment>")
+	{
+		_chek_for_SE_statement_lables(_tree.get_child_if_tree_name("<statments-list>", 0), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
+		_chek_for_SE_statement_list_lables(_tree.get_child_if_tree_name("<statments-list>", 1), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
+		return;
+	}
+	return;
+}
+
+void _chek_for_SE_statement_lables(leaf& _tree, vector<error>& _error_table, vector<lexem>& idents_table, vector<lexem>& predefined_idents, string _program_identifier, vector<lexem_row>& lexem_table, string& asm_code, vector<i_table>& links_table, vector<i_table>& lables_table, vector<i_table>& IOports_table)
+{
+	if (_tree.get_child(0).get_node_name() == "<unsigned-integer>")
+	{
+		string _lable = _tree.get_child(0).get_child(0).get_lexem().get_lexem_ptr()->get_name();
+		lables_table.push_back(i_table(_lable, "C"));
+		_chek_for_SE_statement_lables(_tree.get_child(2), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
+		return;
+	}
+	return;
+}
+
 void _chek_for_SE_statement_list(leaf& _tree, vector<error>& _error_table, vector<lexem>& idents_table, vector<lexem>& predefined_idents, string _program_identifier, vector<lexem_row>& lexem_table, string& asm_code, vector<i_table>& links_table, vector<i_table>& lables_table, vector<i_table>& IOports_table)
 {
 	if (_tree.get_child_if_tree_name("<statments-list>", 0).get_node_name() == "<empty>")
@@ -86,8 +110,12 @@ void _chek_for_SE_statement(leaf& _tree, vector<error>& _error_table, vector<lex
 	if (_tree.get_child(0).get_node_name() == "<unsigned-integer>")
 	{
 		string _lable = _tree.get_child(0).get_child(0).get_lexem().get_lexem_ptr()->get_name();
-		lables_table.push_back(i_table(_lable, "C"));
-		asm_code += _lable + ":\n";
+		for(auto &_l : lables_table)
+			if (_l.get_var() == _lable && _l.get_val() == "C")
+			{
+				asm_code += _lable + ":\n";
+				break;
+			}
 		_chek_for_SE_statement(_tree.get_child(2), _error_table, idents_table, predefined_idents, _program_identifier, lexem_table, asm_code, links_table, lables_table, IOports_table);
 		return;
 	}
@@ -111,6 +139,7 @@ void _chek_for_SE_statement(leaf& _tree, vector<error>& _error_table, vector<lex
 		if (found)
 		{
 			asm_code += "\t;;LINK " + link_var + ", " + link_val + "\n";
+			links_table.push_back(i_table(link_var, link_val));
 			return;
 		}
 		else
@@ -131,17 +160,11 @@ void _chek_for_SE_statement(leaf& _tree, vector<error>& _error_table, vector<lex
 				break;
 			}
 		if (!f)
-			if (!_tree.search_for_lexem_name(link_var))
-			{
-				_error_table.push_back(error(_tree.get_child(1).get_child(0).get_lexem().get_row_number(), _tree.get_child(1).get_child(0).get_lexem().get_collumn(), \
-					"CODE GENERATOR ERROR#3004: Using undeclared link '" + _tree.get_child(1).get_child(0).get_lexem().get_lexem_ptr()->get_name() + "' found on "));
-				return;
-			}
-			else
-			{
-				asm_code += "\tJMP " + link_var + "\n";
-				return;
-			}
+		{
+			_error_table.push_back(error(_tree.get_child(1).get_child(0).get_lexem().get_row_number(), _tree.get_child(1).get_child(0).get_lexem().get_collumn(), \
+				"CODE GENERATOR ERROR#3004: Using undeclared label '" + link_var + "' found on "));
+			return;
+		}
 		else
 		{
 			asm_code += "\tJMP " + link_var + "\n";
@@ -250,4 +273,10 @@ string search_value_by_name(vector<i_table>& IOports_table, string name)
 		if (rec.get_var() == name)
 			return rec.get_val();
 	return NULL;
+}
+
+void print_i_table_to_file(vector<i_table>& table, ofstream& file)
+{
+	for (auto &record : table)
+		file << record.get_var() << " " << record.get_val() << endl;
 }
